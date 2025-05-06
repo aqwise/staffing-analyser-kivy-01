@@ -1,0 +1,9 @@
+from .agent_1_customer_identifier import root_agent as customer_identifier_agent
+from .agent_2_request_parser import root_agent as request_parser_agent
+from .agent_3_osint_researcher import root_agent as osint_researcher_agent
+from .agent_4_attractiveness_profiler import root_agent as attractiveness_profiler_agent
+from .agent_5_interview_tutor import root_agent as interview_tutor_agent
+from .agent_6_report_finalizer import root_agent as report_finalizer_agent
+
+
+__all__ = [customer_identifier_agent, request_parser_agent, osint_researcher_agent, attractiveness_profiler_agent, interview_tutor_agent, report_finalizer_agent]
