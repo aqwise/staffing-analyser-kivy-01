@@ -13,6 +13,17 @@
     spacing: 10
 
     TextInput:
+        id: api_key
+        hint_text: 'Введите API ключ...'
+        size_hint: 1, None
+        height: '40dp'
+        background_color: 0.2, 0.2, 0.2, 1
+        foreground_color: 0.9, 0.9, 0.9, 1
+        password: True
+        multiline: False
+        on_text: root.on_api_key_change(self.text)
+
+    TextInput:
         id: input_text
         hint_text: 'Введите текст для анализа...'
         size_hint: 1, 0.4
