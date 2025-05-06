@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "KivyBasedStuffingApp",
+			"path": "."
+		},
+		{
+			"name": "staffing-analyzer",
+			"path": "../Agents-from-Github/agent-with-gemini-model/staffing-analyzer"
+		}
+	],
+	"settings": {}
+}

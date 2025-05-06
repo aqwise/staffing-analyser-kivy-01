@@ -1,3 +1,4 @@
+import os
 from concurrent.futures import ThreadPoolExecutor
 from kivy.app import App
 from kivy.clock import Clock
@@ -50,7 +51,8 @@ class MainWindow(BoxLayout):
 
 class AnalyzerApp(App):
     def build(self):
-        Builder.load_file('ui.kv')
+        kv_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ui.kv')
+        Builder.load_file(kv_file)
         return MainWindow()
 
 if __name__ == '__main__':
