@@ -4,6 +4,7 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
+from kivy.core.clipboard import Clipboard
 from logic import process
 
 class MainWindow(BoxLayout):
@@ -34,6 +35,20 @@ class MainWindow(BoxLayout):
         query = self.ids.input_text.text
         self.future = self.executor.submit(process, query, self.api_key)
         Clock.schedule_interval(self.check_future, 0.1)
+    
+    def copy_to_clipboard(self):
+        output_text = self.ids.output_text.text
+        if output_text and output_text != "Анализирую...":
+            Clipboard.copy(output_text)
+            # Optional: provide visual feedback that text was copied
+            original_text = self.ids.copy_btn.text
+            self.ids.copy_btn.text = "Скопировано!"
+            
+            # Reset button text after 2 seconds
+            def reset_button_text(dt):
+                self.ids.copy_btn.text = original_text
+            
+            Clock.schedule_once(reset_button_text, 2)
     
     def check_future(self, dt):
         if self.future and self.future.done():

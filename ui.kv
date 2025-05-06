@@ -1,4 +1,5 @@
 #:kivy 2.3.1
+#:import Clipboard kivy.core.clipboard.Clipboard
 
 <MainWindow>:
     canvas.before:
@@ -41,11 +42,23 @@
         background_color: [0.2, 0.5, 0.9, 1] if not self.disabled else [0.3, 0.3, 0.3, 1]
         on_press: root.on_analyze_press()
 
-    TextInput:
-        id: output_text
-        hint_text: 'Результат анализа появится здесь...'
+    BoxLayout:
+        orientation: 'horizontal'
         size_hint: 1, 0.6
-        background_color: 0.15, 0.15, 0.15, 1
-        foreground_color: 0.9, 0.9, 0.9, 1
-        readonly: True
-        multiline: True
+        spacing: 5
+        
+        TextInput:
+            id: output_text
+            hint_text: 'Результат анализа появится здесь...'
+            size_hint: 0.9, 1
+            background_color: 0.15, 0.15, 0.15, 1
+            foreground_color: 0.9, 0.9, 0.9, 1
+            readonly: True
+            multiline: True
+        
+        Button:
+            id: copy_btn
+            text: 'Копировать'
+            size_hint: 0.1, 1
+            background_color: [0.2, 0.5, 0.9, 1]
+            on_press: root.copy_to_clipboard()
