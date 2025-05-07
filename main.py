@@ -6,6 +6,8 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.core.clipboard import Clipboard
 from kivy.animation import Animation
+from os.path import expanduser, join, exists, dirname, abspath
+import configparser  # Используем стандартный configparser вместо kivy.config
 from logic import process
 
 class MainWindow(BoxLayout):
@@ -19,6 +21,9 @@ class MainWindow(BoxLayout):
     
     def on_api_key_change(self, value):
         self.api_key = value.strip()
+        # Сохраняем API ключ при изменении
+        app = App.get_running_app()
+        app.save_api_key(self.api_key)
         self._update_analyze_button()
     
     def on_text_input(self, instance, value):
@@ -135,10 +140,63 @@ class MainWindow(BoxLayout):
         return True
 
 class AnalyzerApp(App):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Путь к файлу конфигурации
+        self.config_path = join(expanduser('~'), '.staffingapp')
+        
     def build(self):
         kv_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ui.kv')
         Builder.load_file(kv_file)
-        return MainWindow()
+        main_window = MainWindow()
+        
+        # Загружаем сохраненный API ключ при запуске
+        saved_api_key = self.load_api_key()
+        if saved_api_key:
+            main_window.api_key = saved_api_key
+            main_window.ids.api_key.text = saved_api_key
+        
+        return main_window
+    
+    def _ensure_config(self):
+        """Вспомогательный метод для создания конфигурации"""
+        config = configparser.ConfigParser()
+        
+        # Пробуем прочитать существующий файл
+        config.read(self.config_path)
+        
+        # Проверяем наличие секции 'settings'
+        if not config.has_section('settings'):
+            config.add_section('settings')
+            
+        return config
+    
+    def load_api_key(self):
+        """Загружает сохраненный API ключ из конфигурационного файла"""
+        config = self._ensure_config()
+        if config.has_section('settings') and config.has_option('settings', 'api_key'):
+            return config.get('settings', 'api_key')
+        return None
+    
+    def save_api_key(self, api_key):
+        """Сохраняет API ключ в конфигурационный файл"""
+        try:
+            config = self._ensure_config()
+            config.set('settings', 'api_key', api_key)
+            
+            # Создаем директорию, если она не существует
+            config_dir = os.path.dirname(self.config_path)
+            if config_dir and not os.path.exists(config_dir):
+                os.makedirs(config_dir)
+                
+            with open(self.config_path, 'w') as f:
+                config.write(f)
+        except Exception as e:
+            print(f"Ошибка при сохранении API ключа: {e}")
+            
+    def on_stop(self):
+        """Метод вызывается при закрытии приложения"""
+        pass  # Не нужно ничего делать, так как ключ уже сохраняется при изменении
 
 if __name__ == '__main__':
     AnalyzerApp().run()
