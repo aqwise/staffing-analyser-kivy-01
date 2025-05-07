@@ -1,4 +1,4 @@
-from google.adk.agents import Agent
+from google.adk.agents import Agent, LoopAgent
 from .prompts import interview_tutor_prompt
 from google.adk.tools import google_search 
 
@@ -11,3 +11,10 @@ root_agent = Agent(
     tools=[google_search],
     output_key="interview_tutor_agent_output",
 )
+
+# root_agent = LoopAgent(
+#     name="osint_researcher_looping_agent",
+#     max_iterations=3,
+#     sub_agents=[interview_tutor_agent],
+#     description="Агент для подготовки к собеседованию на позицию QA/AQA в цикле.",
+#     )
