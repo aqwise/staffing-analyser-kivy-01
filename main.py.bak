@@ -15,18 +15,23 @@ from kivy.utils import get_color_from_hex
 # Import our custom markdown renderer
 from markdown_renderer import MarkdownViewer
 
+# Import example markdown text
+from example_markdown import load_example_markdown
+
 from logic import process      # ваша функция анализа
 
 
 class MainWindow(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.executor = ThreadPoolExecutor(max_workers=1)
-        self.future = None
+        self.executor = ThreadPoolExecutor(max_workers=1)        self.future = None
         self.api_key = None
         self.is_fullscreen_output = False
         self.pre_fullscreen_state = {}
         self._last_md_result = ""          # исходный markdown-текст
+        
+        # Уберем автозагрузку для сохранения производительности
+        # Clock.schedule_once(self.load_example, 0.5)
 
     # ---------- события ввода / интерфейса ----------
 
@@ -100,7 +105,7 @@ class MainWindow(BoxLayout):
     def check_future(self, dt):
         if self.future and self.future.done():
             try:
-                result_md = self.future.result()      # markdown из back-end'а
+                result_md = self.future.result()      # markdown из back-end’а
             except Exception as e:
                 result_md = f"Ошибка: {e}"
 
@@ -109,19 +114,13 @@ class MainWindow(BoxLayout):
             self.ids.input_text.disabled = False
             self.future = None
             return False
-        return True
-
-    # ---------- вывод результата ----------
+        return True    # ---------- вывод результата ----------
 
     def _set_output_md(self, md_text: str):
         """Отображает markdown через MarkdownViewer."""
         self._last_md_result = md_text
         # Устанавливаем текст в MarkdownViewer вместо конвертации в BBCode
-        self.ids.md_viewer.markdown_text = md_text
-
-    # ---------- копирование ----------
-
-    def copy_to_clipboard(self):
+        self.ids.md_viewer.markdown_text = md_text    # ---------- копирование ----------    def copy_to_clipboard(self):
         """Копирует исходный markdown текст в буфер обмена."""
         if self._last_md_result and self._last_md_result != "Анализирую...":
             # Копируем исходный текст markdown без преобразований
@@ -189,7 +188,7 @@ EndFragment:{1}
             orig = self.ids.copy_html_btn.text
             self.ids.copy_html_btn.text = "OK!"
             Clock.schedule_once(lambda dt: setattr(self.ids.copy_html_btn, "text", orig), 2)
-    
+
     def copy_as_rtf(self):
         """Копирует текст в формате RTF для вставки в Word и другие текстовые редакторы."""
         if self._last_md_result and self._last_md_result != "Анализирую...":

@@ -35,17 +35,26 @@
         multiline: True
         background_color: 0.2, 0.2, 0.2, 1
         foreground_color: 0.9, 0.9, 0.9, 1
-        on_text: root.on_text_input(self, self.text)
-
-    # ---------- кнопка анализа ----------
-    Button:
-        id: analyze_btn
-        text: 'АНАЛИЗИРОВАТЬ'
+        on_text: root.on_text_input(self, self.text)    # ---------- кнопки анализа и примера ----------
+    BoxLayout:
         size_hint: 1, None
         height: '48dp'
-        disabled: True
-        background_color: [0.2, 0.5, 0.9, 1] if not self.disabled else [0.3, 0.3, 0.3, 1]
-        on_press: root.on_analyze_press()
+        spacing: 5
+        
+        Button:
+            id: analyze_btn
+            text: 'АНАЛИЗИРОВАТЬ'
+            size_hint: 0.8, 1
+            disabled: True
+            background_color: [0.2, 0.5, 0.9, 1] if not self.disabled else [0.3, 0.3, 0.3, 1]
+            on_press: root.on_analyze_press()
+            
+        Button:
+            id: example_btn
+            text: 'Пример'
+            size_hint: 0.2, 1
+            background_color: [0.5, 0.3, 0.7, 1]
+            on_press: root.load_example()
 
     # ---------- слайдер высоты ----------
     BoxLayout:
@@ -79,7 +88,9 @@
         size_hint: 1, None
         height: '30dp'
         background_color: [0.2, 0.5, 0.2, 1]
-        on_press: root.toggle_fullscreen_output()    # ---------- область вывода + копирование ----------
+        on_press: root.toggle_fullscreen_output()
+
+    # ---------- область вывода + копирование ----------
     BoxLayout:
         id: output_container
         orientation: 'horizontal'
@@ -100,10 +111,32 @@
                 id: md_viewer
                 markdown_text: 'Результат анализа появится здесь...'
                 padding: 10, 10
-
-        Button:
-            id: copy_btn
-            text: 'Копировать'
+                
+        BoxLayout:
+            orientation: 'vertical'
             size_hint: 0.1, 1
-            background_color: [0.2, 0.5, 0.9, 1]
-            on_press: root.copy_to_clipboard()
+            spacing: 2
+            
+            Button:
+                id: copy_btn
+                text: 'Markdown'
+                size_hint: 1, 0.4
+                font_size: '12sp'
+                background_color: [0.2, 0.5, 0.9, 1]
+                on_press: root.copy_to_clipboard()
+            
+            Button:
+                id: copy_html_btn
+                text: 'HTML'
+                size_hint: 1, 0.3
+                font_size: '12sp'
+                background_color: [0.2, 0.6, 0.2, 1]
+                on_press: root.copy_as_html()
+                
+            Button:
+                id: copy_rtf_btn
+                text: 'RTF/Word'
+                size_hint: 1, 0.3  
+                font_size: '12sp'
+                background_color: [0.9, 0.4, 0.2, 1]
+                on_press: root.copy_as_rtf()
