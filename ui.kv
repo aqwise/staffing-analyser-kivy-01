@@ -36,27 +36,15 @@
         background_color: 0.2, 0.2, 0.2, 1
         foreground_color: 0.9, 0.9, 0.9, 1
         on_text: root.on_text_input(self, self.text)
-        
-    # ---------- кнопки анализа и примера ----------
-    BoxLayout:
+          # ---------- кнопка анализа ----------
+    Button:
+        id: analyze_btn
+        text: 'АНАЛИЗИРОВАТЬ'
         size_hint: 1, None
         height: '48dp'
-        spacing: 5
-        
-        Button:
-            id: analyze_btn
-            text: 'АНАЛИЗИРОВАТЬ'
-            size_hint: 0.8, 1
-            disabled: True
-            background_color: [0.2, 0.5, 0.9, 1] if not self.disabled else [0.3, 0.3, 0.3, 1]
-            on_press: root.on_analyze_press()
-            
-        Button:
-            id: example_btn
-            text: 'Пример'
-            size_hint: 0.2, 1
-            background_color: [0.5, 0.3, 0.7, 1]
-            on_press: root.load_example()
+        disabled: True
+        background_color: [0.2, 0.5, 0.9, 1] if not self.disabled else [0.3, 0.3, 0.3, 1]
+        on_press: root.on_analyze_press()
 
     # ---------- слайдер высоты ----------
     BoxLayout:

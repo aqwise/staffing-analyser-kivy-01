@@ -190,50 +190,6 @@ EndFragment:{1}
             self.ids.copy_html_btn.text = "OK!"
             Clock.schedule_once(lambda dt: setattr(self.ids.copy_html_btn, "text", orig), 2)
 
-    def load_example(self):
-        """Загружает пример markdown текста"""
-        example_text = """**Итоговый Отчёт по Вакансии Автотестировщик мобильных и веб приложений/Senior**
-
-**1. Общая информация о запросе на вакансию**
-
-*   **Внутренние идентификаторы и ссылки Salesforce:**
-    *   CV - QA - - Московская Биржа - atest - R-10973 (Ссылка: https://innowisegroup2.my.salesforce.com/lightning/r/RequestPosition__c/a05J300000WM8GyIAL/view)
-    *   CV - Московская Биржа - atest - RU - QA - 020128 (Ссылка: https://innowisegroup2.my.salesforce.com/lightning/r/Opportunity/006J3000005pDH5IAM/view)
-*   **Код запроса от Заказчика:** МБ-СПЦ-2025-4944/1 от 22.05.2025 8:57:42 на ИТ-ресурсы для ПАО Московская Биржа.
-*   **Компания-посредник:** Innowise Group.
-*   **Сейлс менеджер:** Andrey Testov.
-*   **Статус проекта:** New.
-*   **Сроки:**
-    *   Дата окончания подачи заявок: 27.05.2025 09:00.
-    *   Срок отправки заказчику: 2025-05-23.
-*   **Ограничения:** На запрос можно подать максимум 3 кандидата.
-*   **Указания по оформлению:**
-    *   ФИО кандидатов указываем полностью.
-    *   Чек-лист — это таблица с требованиями из запроса, в которой напротив каждого требования отмечается «да» или «нет» в зависимости от соответствия.
-    *   Заполнение информации о кандидате строго по ШАБЛОНУ: [https://docs.google.com/document/d/1zqwT7lV9F8Hr_ZnIdb5iXyMa8dgg5rH7/edit](https://docs.google.com/document/d/1zqwT7lV9F8Hr_ZnIdb5iXyMa8dgg5rH7/edit)
-
---------------------------------------------------
-
-**2. Информация о Заказчике**
-
-*   **Наименование Заказчика:** ПАО «Московская Биржа».
-*   **Индустрия проекта:** FinTech.
-*   **Описание компании "Московская Биржа":**
-    *   **Официальный сайт:** https://www.moex.com/
-    *   **Аффилированные ресурсы:**
-        *   https://www.nsd.ru/ (НКО АО «Национальный расчетный депозитарий»)
-        *   https://www.nationalclearingcentre.ru/ (НКО НКЦ «Национальный Клиринговый Центр» (АО))
-        *   https://finuslugi.ru/ (Финуслуги)
-        *   https://career.moex.com/ (Карьерный сайт)"""
-        
-        # Устанавливаем текст примера в текстовое поле
-        self.ids.input_text.text = example_text
-        
-        # Сразу же отображаем его в области вывода для демонстрации
-        self._set_output_md(example_text)
-        
-        # Обновляем состояние кнопки анализа
-        self._update_analyze_button()
 
 
 class AnalyzerApp(App):
