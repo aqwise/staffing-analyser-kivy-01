@@ -55,3 +55,7 @@ After successful build:
 - `main.py` - Main application entry point
 - `logic.py` - Business logic implementation
 - `ui.kv` - Kivy UI layout definitions
+
+## Debug 
+
+- cd /d/KivyBasedStaffingApp_03/staffing-analyser-kivy-01 && python main.py

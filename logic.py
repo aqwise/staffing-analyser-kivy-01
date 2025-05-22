@@ -1,4 +1,5 @@
 import os
+import asyncio
 from google.genai import types
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.runners import Runner
@@ -24,11 +25,20 @@ def process(query: str, api_key: str) -> str:
     os.environ['GOOGLE_API_KEY'] = api_key
     
     # Create a session
-    session = session_service.create_session(
+    session_result = session_service.create_session(
         app_name="StaffingAnalyzer",
         user_id="user"
     )
     
+    # Handle potential coroutine (if create_session is an async function)
+    if hasattr(session_result, '__await__'):
+        # This is a coroutine, we need to get the actual session object
+        import asyncio
+        session = asyncio.run(session_result)
+    else:
+        # This is already a session object
+        session = session_result
+        
     # Set up the runner
     runner = Runner(
         app_name="StaffingAnalyzer",
@@ -36,20 +46,26 @@ def process(query: str, api_key: str) -> str:
         artifact_service=artifact_service,
         session_service=session_service,
     )
-    
-    # Create content for the agent
+      # Create content for the agent
     content = types.Content(
         role="user", 
         parts=[types.Part(text=query)]
     )
     
     try:
-        # Run the agent pipeline
-        events = list(runner.run(
+        # Run the agent pipeline - handle potential coroutine
+        run_result = runner.run(
             user_id="user",
             session_id=session.id,
             new_message=content
-        ))
+        )
+        
+        # Check if run_result is a coroutine
+        if hasattr(run_result, '__await__'):
+            import asyncio
+            events = list(asyncio.run(run_result))
+        else:
+            events = list(run_result)
         
         # Get the final response from the last event
         if events:
