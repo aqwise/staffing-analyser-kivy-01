@@ -1,5 +1,7 @@
 #:kivy 2.3.1
 #:import Clipboard kivy.core.clipboard.Clipboard
+#:import MarkdownViewer markdown_renderer.MarkdownViewer
+#:import get_color_from_hex kivy.utils.get_color_from_hex
 
 <MainWindow>:
     canvas.before:
@@ -8,31 +10,34 @@
         Rectangle:
             pos: self.pos
             size: self.size
-    
+
     orientation: 'vertical'
     padding: 10
     spacing: 10
 
+    # ---------- API-ключ ----------
     TextInput:
         id: api_key
         hint_text: 'Введите API ключ...'
         size_hint: 1, None
         height: '40dp'
-        background_color: 0.2, 0.2, 0.2, 1
-        foreground_color: 0.9, 0.9, 0.9, 1
         password: True
         multiline: False
+        background_color: 0.2, 0.2, 0.2, 1
+        foreground_color: 0.9, 0.9, 0.9, 1
         on_text: root.on_api_key_change(self.text)
 
+    # ---------- поле ввода ----------
     TextInput:
         id: input_text
         hint_text: 'Введите текст для анализа...'
         size_hint: 1, 0.4
+        multiline: True
         background_color: 0.2, 0.2, 0.2, 1
         foreground_color: 0.9, 0.9, 0.9, 1
-        multiline: True
         on_text: root.on_text_input(self, self.text)
 
+    # ---------- кнопка анализа ----------
     Button:
         id: analyze_btn
         text: 'АНАЛИЗИРОВАТЬ'
@@ -41,55 +46,61 @@
         disabled: True
         background_color: [0.2, 0.5, 0.9, 1] if not self.disabled else [0.3, 0.3, 0.3, 1]
         on_press: root.on_analyze_press()
-    
+
+    # ---------- слайдер высоты ----------
     BoxLayout:
-        orientation: 'horizontal'
         size_hint: 1, None
         height: '30dp'
-        
+
         Label:
             text: 'Размер области вывода:'
-            size_hint: 0.3, 1
+            size_hint: 0.35, 1
             color: 0.9, 0.9, 0.9, 1
-            
+
         Slider:
             id: output_size_slider
-            size_hint: 0.6, 1
+            size_hint: 0.55, 1
             min: 0.2
-            max: 1.0  # Updated to allow 100% height
-            value: 0.6
+            max: 1.0
             step: 0.05
+            value: 0.6
             on_value: root.adjust_output_size(self.value)
-            
+
         Label:
             id: output_size_label
             text: f"{int(output_size_slider.value * 100)}%"
             size_hint: 0.1, 1
             color: 0.9, 0.9, 0.9, 1
 
+    # ---------- кнопка fullscreen ----------
     Button:
         id: fullscreen_btn
         text: 'На весь экран'
         size_hint: 1, None
         height: '30dp'
         background_color: [0.2, 0.5, 0.2, 1]
-        on_press: root.toggle_fullscreen_output()
-
+        on_press: root.toggle_fullscreen_output()    # ---------- область вывода + копирование ----------
     BoxLayout:
         id: output_container
         orientation: 'horizontal'
         size_hint: 1, 0.6
         spacing: 5
-        
-        TextInput:
-            id: output_text
-            hint_text: 'Результат анализа появится здесь...'
+
+        # MarkdownViewer для красивого отображения Markdown
+        BoxLayout:
+            id: viewer_container
             size_hint: 0.9, 1
-            background_color: 0.15, 0.15, 0.15, 1
-            foreground_color: 0.9, 0.9, 0.9, 1
-            readonly: True
-            multiline: True
-        
+            canvas.before:
+                Color:
+                    rgba: 0.12, 0.12, 0.12, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size            
+            MarkdownViewer:
+                id: md_viewer
+                markdown_text: 'Результат анализа появится здесь...'
+                padding: 10, 10
+
         Button:
             id: copy_btn
             text: 'Копировать'
