@@ -6,7 +6,7 @@ from google.adk.tools import google_search
 
 osint_agent = Agent(
     name="osint_researcher_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.5-pro-preview-05-06",
     description="Агент для проведения OSINT-исследования всех упомянутых компаний с использованием Google Search.",
     instruction=osint_researcher_prompt(),
     tools=[google_search],

@@ -17,7 +17,7 @@ from .sub_agents import report_finalizer_agent
 # Теперь агент может обнаруживать и обрабатывать несколько упомянутых компаний.
 agent_1_customer_identifier = Agent(
     name="customer_identifier_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.5-pro-preview-05-06",
     description="Агент для определения всех упомянутых компаний из стаффинг-запроса.",
     instruction="""
 Твоя задача — проанализировать текст стаффинг-запроса и выявить все потенциальные упоминания компаний, кроме Innowise Group (о ней информация известна и проверять не нужно).
@@ -59,7 +59,7 @@ agent_1_customer_identifier = Agent(
 # ----- Определение Агента 2: Парсер Запроса -----
 agent_2_request_parser = Agent(
     name="request_parser_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.5-pro-preview-05-06",
     description="Агент для извлечения ключевой информации из стаффинг-запроса и форматирования в текст.",
     instruction=""""Process data from state key 'customer_identifier_output'
 Проанализируй стаффинг-запрос, переданный в контексте под ключом 'initial_request'.
@@ -82,7 +82,7 @@ agent_2_request_parser = Agent(
 # Агент теперь исследует все компании из списка 'all_companies'.
 agent_3_osint_researcher = Agent(
     name="osint_researcher_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.5-pro-preview-05-06",
     description="Агент для проведения OSINT-исследования всех упомянутых компаний с использованием Google Search.",
     instruction="""
 Ты — AI-аналитик. В контексте есть список компаний для исследования ('all_companies').
@@ -102,7 +102,7 @@ agent_3_osint_researcher = Agent(
 # ----- Определение Агента 4: Оценщик Привлекательности и Профиля -----
 agent_4_attractiveness_profiler = Agent(
     name="attractiveness_profiler_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.5-pro-preview-05-06",
     description="Агент для оценки привлекательности вакансии для QA/AQA и построения специфического профиля кандидата на основе возможностей Innowise QA Automation Services.",
     instruction="""
 Проанализируй:
@@ -168,7 +168,7 @@ agent_4_attractiveness_profiler = Agent(
 # ----- Определение Агента 5: Тьютор для Собеседования -----
 agent_5_interview_tutor = Agent(
     name="interview_tutor_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.5-pro-preview-05-06",
     description="Агент для подготовки к собеседованию на позицию QA/AQA.",
     instruction="""
 Проанализируй:
@@ -190,7 +190,7 @@ agent_5_interview_tutor = Agent(
 # ----- Определение Агента 6: Финализатор Отчета -----
 agent_6_report_finalizer = Agent(
     name="report_finalizer_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.5-pro-preview-05-06",
     description="Агент для финальной сборки структурированного отчета без изменений содержания.",
     instruction="""
 Ты — Копирайтер и редактор. Твоя задача — собрать итоговый отчет без добавления новых данных, но оформить его в логичную и строго структурированную форму с вложенностью.

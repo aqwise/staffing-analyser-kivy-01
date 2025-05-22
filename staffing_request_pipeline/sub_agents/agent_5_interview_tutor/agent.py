@@ -5,7 +5,7 @@ from google.adk.tools import google_search
 
 root_agent = Agent(
     name="interview_tutor_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.5-pro-preview-05-06",
     description="Агент для подготовки к собеседованию на позицию QA/AQA.",
     instruction=interview_tutor_prompt(),
     tools=[google_search],
