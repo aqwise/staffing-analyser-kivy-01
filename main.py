@@ -189,50 +189,6 @@ EndFragment:{1}
             orig = self.ids.copy_html_btn.text
             self.ids.copy_html_btn.text = "OK!"
             Clock.schedule_once(lambda dt: setattr(self.ids.copy_html_btn, "text", orig), 2)
-    
-    def copy_as_rtf(self):
-        """Копирует текст в формате RTF для вставки в Word и другие текстовые редакторы."""
-        if self._last_md_result and self._last_md_result != "Анализирую...":
-            from md_converter import md_to_rtf
-            
-            # Конвертируем Markdown в RTF
-            rtf_content = md_to_rtf(self._last_md_result)
-            
-            try:
-                if os.name == 'nt':
-                    try:
-                        import win32clipboard
-                        
-                        win32clipboard.OpenClipboard()
-                        win32clipboard.EmptyClipboard()
-                        
-                        # Сначала копируем обычный текст как запасной вариант
-                        win32clipboard.SetClipboardData(win32clipboard.CF_TEXT, self._last_md_result.encode('utf-8'))
-                        
-                        # Затем копируем RTF
-                        rtf_fmt = win32clipboard.RegisterClipboardFormat("Rich Text Format")
-                        win32clipboard.SetClipboardData(rtf_fmt, rtf_content.encode('utf-8'))
-                        
-                        win32clipboard.CloseClipboard()
-                        
-                        orig = self.ids.copy_rtf_btn.text
-                        self.ids.copy_rtf_btn.text = "OK!"
-                        Clock.schedule_once(lambda dt: setattr(self.ids.copy_rtf_btn, "text", orig), 2)
-                        return
-                    except (ImportError, Exception) as e:
-                        print(f"Ошибка при копировании RTF: {e}")
-                
-                # Если специфичный для платформы способ не сработал, используем обычный
-                Clipboard.copy(self._last_md_result)
-                
-            except Exception as e:
-                print(f"Ошибка при копировании RTF: {e}")
-                # Если что-то пошло не так, используем обычное копирование текста
-                Clipboard.copy(self._last_md_result)
-            
-            orig = self.ids.copy_rtf_btn.text
-            self.ids.copy_rtf_btn.text = "OK!"
-            Clock.schedule_once(lambda dt: setattr(self.ids.copy_rtf_btn, "text", orig), 2)
 
     def load_example(self):
         """Загружает пример markdown текста"""
