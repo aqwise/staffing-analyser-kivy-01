@@ -5,7 +5,7 @@ from google.adk.tools import google_search
 
 root_agent = Agent(
     name="attractiveness_profiler_agent",
-    model="gemini-2.5-pro-preview-05-06",
+    model="gemini-2.0-flash-exp",
     description="Агент для оценки привлекательности вакансии для QA/AQA и построения специфического профиля кандидата на основе возможностей Innowise QA Automation Services.",
     instruction=attractiveness_profiler_prompt(),
     tools=[google_search],
