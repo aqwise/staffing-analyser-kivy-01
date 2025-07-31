@@ -6,9 +6,9 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
 from kivy.core.clipboard import Clipboard
 from kivy.animation import Animation
-from os.path import expanduser, join, exists, dirname, abspath
+from os.path import expanduser, join
 import configparser  # Используем стандартный configparser вместо kivy.config
-from logic import process
+from legacy.logic import process
 
 class MainWindow(BoxLayout):
     def __init__(self, **kwargs):
