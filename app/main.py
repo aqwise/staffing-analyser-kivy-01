@@ -1,5 +1,5 @@
 import sys
-from datetime import datetime  # ← ДОБАВЛЕН ИМПОРТ
+from datetime import datetime
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -54,7 +54,7 @@ async def root():
         "version": settings.version,
         "status": "running",
         "docs": "/docs",
-        "note": "session_id is optional in /api/v1/analyze",
+        "note": "session_id is optional in /api/v1/analyze, set null in request if you have token in .env",
         "endpoints": {
             "analyze": "POST /api/v1/analyze (session_id optional)",
             "sessions": "POST /api/v1/sessions",

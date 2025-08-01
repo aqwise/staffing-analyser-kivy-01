@@ -12,11 +12,11 @@ class AnalysisService:
         logger.info("AnalysisService initialized")
 
     async def analyze(
-        self,
-        query: str,
-        api_key: str,
-        session_id: Optional[str] = None,
-        user_id: str = "user"
+            self,
+            query: str,
+            api_key: str,
+            session_id: Optional[str] = None,
+            user_id: str = "user"
     ) -> Dict[str, Any]:
         """Analyze query using backend"""
         return await analyzer.analyze(query, api_key, session_id, user_id)

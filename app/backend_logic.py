@@ -3,7 +3,6 @@ from typing import Optional, Dict, Any
 from datetime import datetime
 from loguru import logger
 
-# Google ADK imports
 from google.genai import types
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.runners import Runner
