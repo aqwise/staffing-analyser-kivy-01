@@ -145,18 +145,31 @@ async def create_session(request: SessionCreateRequest):
 
 @app.get("/api/v1/sessions/{session_id}", response_model=SessionInfoResponse)
 async def get_session_info(session_id: str):
-    """Get session information"""
-    logger.info(f"Session info request: {session_id}")
+    """Get session information with better error handling"""
+    try:
+        logger.info(f"Session info request: {session_id}")
 
-    session_info = await analysis_service.get_session_info(session_id)
+        session_info = await analysis_service.get_session_info(session_id)
 
-    if not session_info:
+        if not session_info:
+            logger.warning(f"Session not found: {session_id}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Session {session_id} not found"
+            )
+
+        logger.info(f"Session info returned for: {session_id}")
+        return SessionInfoResponse(**session_info)
+
+    except HTTPException:
+        # Re-raise HTTP exceptions (like 404)
+        raise
+    except Exception as e:
+        logger.error(f"Unexpected error getting session {session_id}: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Session not found"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Internal error retrieving session information: {str(e)}"
         )
-
-    return SessionInfoResponse(**session_info)
 
 
 # API status
@@ -169,7 +182,7 @@ async def api_status():
         "session_mode": "optional",
         "endpoints": {
             "analyze": "POST /api/v1/analyze",
-            "create_session": "POST /api/v1/sessions", 
+            "create_session": "POST /api/v1/sessions",
             "get_session": "GET /api/v1/sessions/{id}",
             "health": "GET /health"
         },
