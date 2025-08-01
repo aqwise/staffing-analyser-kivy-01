@@ -50,16 +50,19 @@ class SessionCreateResponse(BaseModel):
 
 
 class SessionInfoResponse(BaseModel):
-    """Session info response"""
+    """Session info response with auto_created flag"""
     session_id: str
     user_id: str
     created_at: str
     requests_count: int
+    auto_created: Optional[bool] = False
 
 
 class HealthResponse(BaseModel):
-    """Health check response"""
+    """Health check response with detailed session stats"""
     active_sessions: int
+    persistent_sessions: Optional[int] = None
+    auto_created_sessions: Optional[int] = None
     total_requests: int
     status: str
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
@@ -69,4 +72,11 @@ class ErrorResponse(BaseModel):
     """Error response"""
     error: str
     status: str = "error"
+    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
+
+class SessionDeleteResponse(BaseModel):
+    """Session deletion response"""
+    success: bool
+    session_id: str
+    message: str
     timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())

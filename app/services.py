@@ -36,6 +36,11 @@ class AnalysisService:
         """Health check"""
         return analyzer.get_stats()
 
+    @staticmethod
+    async def delete_session(session_id: str) -> bool:
+        """Delete session"""
+        return await analyzer.delete_session(session_id)
+
 
 # Global service instance
 analysis_service = AnalysisService()
