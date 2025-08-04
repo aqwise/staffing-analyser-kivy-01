@@ -179,6 +179,7 @@ async def api_status():
 # 🧠 ANALYSIS ENDPOINTS
 # =============================================================================
 
+# TODO add 429 error
 @app.post(
     "/api/v1/analyze",
     tags=["🧠 Analysis"],
