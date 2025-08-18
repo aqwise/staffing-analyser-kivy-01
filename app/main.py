@@ -1,10 +1,12 @@
 import sys
 from datetime import datetime
+
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from loguru import logger
 
+from app.services import analysis_service
 from .config import settings
 from .models import (
     AnalyzeRequest, AnalyzeResponse,
@@ -12,7 +14,6 @@ from .models import (
     SessionInfoResponse, HealthResponse, ErrorResponse,
     SessionDeleteResponse
 )
-from .services import analysis_service
 
 # Configure logging
 logger.remove()
@@ -244,6 +245,43 @@ async def analyze(request: AnalyzeRequest):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Analysis failed: {str(e)}"
         )
+
+@app.post(
+    "/api/v1/analyze_parametrized",
+    tags=["🧠 Analysis"],
+    response_model=AnalyzeResponse,
+    summary="🎯 Parametrized Analyze (with auto domain detect)",
+    description="Анализ запроса с автодетектом домена (QA, DevOps и т.д.) и автоматическим выбором пайплайна"
+)
+async def analyze_parametrized(request: AnalyzeRequest):
+    # Логируем доступные методы объекта analysis_service
+    print("Available methods in analysis_service:", dir(analysis_service))
+
+    # Логируем входные данные запроса
+    print(f"AnalyzeParametrized request:")
+    print(f"  - query: {request.query[:100]}...")  # первые 100 символов
+    print(f"  - api_key: {'***' if request.api_key else None}")
+    print(f"  - session_id: {request.session_id}")
+    print(f"  - user_id: {request.user_id}")
+    print(f"  - business_domain: {request.business_domain}")
+
+    try:
+        print("Calling analysis_service.analyze_parametrized...")
+        result = await analysis_service.analyze_parametrized(
+            query=request.query,
+            api_key=request.api_key,
+            session_id=request.session_id,
+            user_id=request.user_id,
+            business_domain=request.business_domain
+        )
+        print("AnalyzeParametrized result received successfully")
+        print(f"Result keys: {list(result.keys()) if isinstance(result, dict) else 'Not a dict'}")
+        return AnalyzeResponse(**result)
+    except Exception as e:
+        print(f"ERROR in analyze_parametrized endpoint: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
+        raise e
 
 # =============================================================================
 # 🔄 SESSION MANAGEMENT

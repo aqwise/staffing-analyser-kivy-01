@@ -8,6 +8,9 @@ from google.genai import types
 from google.adk.artifacts import InMemoryArtifactService
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
+
+from staffing_chainable_agents_request_pipeline.agent import create_parametrized_pipeline
+from staffing_chainable_agents_request_pipeline.utils import validate_business_domain
 from staffing_request_pipeline.agent import root_agent
 
 
@@ -43,11 +46,11 @@ class StaffingAnalyzer:
         return session_id
 
     async def analyze(
-        self,
-        query: str,
-        api_key: str,
-        session_id: Optional[str] = None,
-        user_id: str = "user"
+            self,
+            query: str,
+            api_key: str,
+            session_id: Optional[str] = None,
+            user_id: str = "user"
     ) -> Dict[str, Any]:
         """Main analysis method with auto-cleanup"""
 
@@ -157,6 +160,102 @@ class StaffingAnalyzer:
                 "session_auto_created": session_auto_created
             }
 
+    async def analyze_parametrized(
+            self,
+            query: str,
+            api_key: str,
+            session_id: Optional[str] = None,
+            user_id: str = "user",
+            business_domain: Optional[str] = None  # <-- ДОБАВЛЯЕМ
+    ) -> Dict[str, Any]:
+        """
+        Анализ c автоопределением или ручным указанием домена.
+        """
+        self.total_requests_counter += 1
+        if not query.strip():
+            raise ValueError("Query cannot be empty")
+        if not api_key.strip():
+            raise ValueError("API key cannot be empty")
+        os.environ['GOOGLE_API_KEY'] = api_key
+
+        session_auto_created = False
+        if session_id and session_id in self.active_sessions:
+            session = self.active_sessions[session_id]['session']
+            self.active_sessions[session_id]['requests_count'] += 1
+        else:
+            session_id = await self.create_session(user_id, auto_created=True)
+            session = self.active_sessions[session_id]['session']
+            self.active_sessions[session_id]['requests_count'] = 1
+            session_auto_created = True
+
+        # 1. Выбираем домен: либо от пользователя, либо авто
+        if business_domain and business_domain.strip():
+            chosen_domain = validate_business_domain(business_domain)
+        else:
+            chosen_domain = "AQA"
+
+        # 2. Создаем пайплайн
+        root_agent_param = create_parametrized_pipeline(chosen_domain)  # ← здесь домен передаем напрямую!
+
+        runner = Runner(
+            app_name="StaffingAnalyzer",
+            agent=root_agent_param,
+            artifact_service=self.artifact_service,
+            session_service=self.session_service,
+        )
+
+        content = types.Content(role="user", parts=[types.Part(text=query)])
+        try:
+            events_result = runner.run(
+                user_id=user_id,
+                session_id=session.id,
+                new_message=content
+            )
+            if hasattr(events_result, '__aiter__'):
+                events = []
+                async for event in events_result:
+                    events.append(event)
+            else:
+                events = list(events_result)
+
+            result_data = None
+            if events:
+                last_event = events[-1]
+                result = "".join([part.text for part in last_event.content.parts if part.text])
+                result_data = {
+                    "result": result or "Analysis completed but no text response generated.",
+                    "session_id": session_id,
+                    "status": "success",
+                    "timestamp": datetime.now().isoformat(),
+                    "query_length": len(query),
+                    "events_count": len(events),
+                    "session_auto_created": session_auto_created
+                }
+            else:
+                result_data = {
+                    "result": "No response generated from the analysis.",
+                    "session_id": session_id,
+                    "status": "no_response",
+                    "timestamp": datetime.now().isoformat(),
+                    "session_auto_created": session_auto_created
+                }
+
+            if session_auto_created:
+                await self._cleanup_auto_session(session_id)
+            return result_data
+
+        except Exception as e:
+            if session_auto_created:
+                await self._cleanup_auto_session(session_id)
+            return {
+                "result": f"Analysis failed: {str(e)}",
+                "session_id": session_id,
+                "status": "error",
+                "timestamp": datetime.now().isoformat(),
+                "error": str(e),
+                "session_auto_created": session_auto_created
+            }
+
     async def _cleanup_auto_session(self, session_id: str):
         """Internal method to clean up auto-created sessions"""
         try:
@@ -233,4 +332,4 @@ class StaffingAnalyzer:
 
 
 # Global instance
-analyzer = StaffingAnalyzer()
+backendAnalyzer = StaffingAnalyzer()
