@@ -37,14 +37,14 @@ pip install -r requirements.txt
 
 3. Создать .env файл на основе .env.example:
 ```bash
-cp .env.example .env
+cp ../.env.example ../.env
 ```
 
 4. Заполнить GOOGLE_API_KEY в .env файле
 
 5. Запустить приложение (открывайте сваггер http://localhost:8000/docs#/):
 ```bash
-python run.py
+python ../run.py
 ```
 
 ## API Эндпоинты
