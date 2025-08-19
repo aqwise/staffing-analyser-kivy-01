@@ -9,6 +9,7 @@ from google.adk.artifacts import InMemoryArtifactService
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 
+from app.config import settings
 from staffing_chainable_agents_request_pipeline.agent import create_parametrized_pipeline
 from staffing_chainable_agents_request_pipeline.utils import validate_business_domain
 from staffing_request_pipeline.agent import root_agent
@@ -54,14 +55,19 @@ class StaffingAnalyzer:
     ) -> Dict[str, Any]:
         """Main analysis method with auto-cleanup"""
 
-        # Увеличиваем глобальный счетчик
-        self.total_requests_counter += 1
+        # Определяем, какой ключ использовать
+        effective_api_key = api_key
+        if not effective_api_key or effective_api_key == "string":
+            effective_api_key = settings.google_api_key
 
         # Validation
         if not query.strip():
             raise ValueError("Query cannot be empty")
-        if not api_key.strip():
-            raise ValueError("API key cannot be empty")
+        if not effective_api_key or not effective_api_key.strip():
+            raise ValueError("API key must be provided either in the request body or in the .env file")
+
+        # Set Google API key
+        os.environ['GOOGLE_API_KEY'] = effective_api_key
 
         # Set Google API key
         os.environ['GOOGLE_API_KEY'] = api_key
@@ -172,11 +178,19 @@ class StaffingAnalyzer:
         Анализ c автоопределением или ручным указанием домена.
         """
         self.total_requests_counter += 1
+        # Определяем, какой ключ использовать
+        effective_api_key = api_key
+        if not effective_api_key or effective_api_key == "string":
+            effective_api_key = settings.google_api_key
+
+        # Validation
         if not query.strip():
             raise ValueError("Query cannot be empty")
-        if not api_key.strip():
-            raise ValueError("API key cannot be empty")
-        os.environ['GOOGLE_API_KEY'] = api_key
+        if not effective_api_key or not effective_api_key.strip():
+            raise ValueError("API key must be provided either in the request body or in the .env file")
+
+        # Set Google API key
+        os.environ['GOOGLE_API_KEY'] = effective_api_key
 
         session_auto_created = False
         if session_id and session_id in self.active_sessions:
