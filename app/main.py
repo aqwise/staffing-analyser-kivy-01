@@ -254,16 +254,8 @@ async def analyze(request: AnalyzeRequest):
     description="Анализ запроса с автодетектом домена (QA, DevOps и т.д.) и автоматическим выбором пайплайна"
 )
 async def analyze_parametrized(request: AnalyzeRequest):
-    # Логируем доступные методы объекта analysis_service
-    print("Available methods in analysis_service:", dir(analysis_service))
-
-    # Логируем входные данные запроса
-    print(f"AnalyzeParametrized request:")
-    print(f"  - query: {request.query[:100]}...")  # первые 100 символов
-    print(f"  - api_key: {'***' if request.api_key else None}")
-    print(f"  - session_id: {request.session_id}")
-    print(f"  - user_id: {request.user_id}")
-    print(f"  - business_domain: {request.business_domain}")
+    session_note = f"session: {request.session_id or 'auto-create'}"
+    logger.info(f"Analysis request - query length: {len(request.query)}, {session_note}")
 
     try:
         print("Calling analysis_service.analyze_parametrized...")
