@@ -1,18 +1,13 @@
 from google.adk.agents import SequentialAgent
 from google.adk.tools import google_search
 
-from staffing_chainable_agents_request_pipeline.agents.agent_1_customer_identifier.agent_customer_identifier import \
-    CustomerIdentifierAgent
-from staffing_chainable_agents_request_pipeline.agents.agent_2_request_parser.agent_request_parser import \
-    RequestParserAgent
-from staffing_chainable_agents_request_pipeline.agents.agent_3_osint_researcher.agent_osint_researcher import \
-    ParametrizedOSINTAgent
-from staffing_chainable_agents_request_pipeline.agents.agent_4_attractiveness_profiler.agent_profiler import \
-    ParametrizedAttractivenessProfilerAgent
-from staffing_chainable_agents_request_pipeline.agents.agent_5_interview_tutor.agent_tutor import \
-    ParametrizedInterviewTutorAgent
-from staffing_chainable_agents_request_pipeline.agents.agent_6_report_finalizer.agent_finalizer import \
-    ParametrizedReportFinalizerAgent
+from .agents.agent_1_customer_identifier.agent_customer_identifier import CustomerIdentifierAgent
+from .agents.agent_2_request_parser.agent_request_parser import RequestParserAgent
+from .agents.agent_3_osint_researcher.agent_osint_researcher import ParametrizedOSINTAgent
+from .agents.agent_4_attractiveness_profiler.agent_profiler import ParametrizedAttractivenessProfilerAgent
+from .agents.agent_5_interview_tutor.agent_tutor import ParametrizedInterviewTutorAgent
+from .agents.agent_6_report_finalizer.agent_finalizer import ParametrizedReportFinalizerAgent
+from .utils import AI_MODEL
 
 from staffing_chainable_agents_request_pipeline.utils import validate_business_domain
 
@@ -22,14 +17,14 @@ def create_parametrized_pipeline(business_domain: str):
 
     agent_1_customer_identifier = CustomerIdentifierAgent(
         name="customer_identifier_agent",
-        model="gemini-2.0-flash-exp",
+        model=AI_MODEL,
         tools=[google_search],
         output_key="customer_identifier_output"
     )
 
     agent_2_request_parser = RequestParserAgent(
         name="request_parser_agent",
-        model="gemini-2.0-flash-exp",
+        model=AI_MODEL,
         tools=[google_search],
         output_key="request_parser_agent_output"
     )
@@ -37,7 +32,7 @@ def create_parametrized_pipeline(business_domain: str):
     agent_3_osint = ParametrizedOSINTAgent(
         name="osint_researcher_agent",
         business_domain=business_domain,
-        model="gemini-2.0-flash-exp",
+        model=AI_MODEL,
         tools=[google_search],
         output_key="osint_researcher_agent_output"
     )
@@ -45,7 +40,7 @@ def create_parametrized_pipeline(business_domain: str):
     agent_4_profiler = ParametrizedAttractivenessProfilerAgent(
         name="attractiveness_profiler_agent",
         business_domain=business_domain,
-        model="gemini-2.0-flash-exp",
+        model=AI_MODEL,
         tools=[google_search],
         output_key="attractiveness_profiler_output"
     )
@@ -53,7 +48,7 @@ def create_parametrized_pipeline(business_domain: str):
     agent_5_tutor = ParametrizedInterviewTutorAgent(
         name="interview_tutor_agent",
         business_domain=business_domain,
-        model="gemini-2.0-flash-exp",
+        model=AI_MODEL,
         tools=[google_search],
         output_key="interview_tutor_agent_output"
     )
@@ -61,7 +56,7 @@ def create_parametrized_pipeline(business_domain: str):
     agent_6_finalizer = ParametrizedReportFinalizerAgent(
         name="report_finalizer_agent",
         business_domain=business_domain,
-        model="gemini-2.0-flash-exp",
+        model=AI_MODEL,
         tools=[],
         output_key=None
     )
