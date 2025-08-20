@@ -9,6 +9,7 @@ from staffing_request_pipeline.agent import root_agent
 session_service = InMemorySessionService()
 artifact_service = InMemoryArtifactService()
 
+
 def process(query: str, api_key: str) -> str:
     """
     Process the staffing request using the agent pipeline.
@@ -22,13 +23,13 @@ def process(query: str, api_key: str) -> str:
     """
     # Set up environment
     os.environ['GOOGLE_API_KEY'] = api_key
-    
+
     # Create a session
     session = session_service.create_session(
         app_name="StaffingAnalyzer",
         user_id="user"
     )
-    
+
     # Set up the runner
     runner = Runner(
         app_name="StaffingAnalyzer",
@@ -36,13 +37,13 @@ def process(query: str, api_key: str) -> str:
         artifact_service=artifact_service,
         session_service=session_service,
     )
-    
+
     # Create content for the agent
     content = types.Content(
-        role="user", 
+        role="user",
         parts=[types.Part(text=query)]
     )
-    
+
     try:
         # Run the agent pipeline
         events = list(runner.run(
@@ -50,7 +51,7 @@ def process(query: str, api_key: str) -> str:
             session_id=session.id,
             new_message=content
         ))
-        
+
         # Get the final response from the last event
         if events:
             last_event = events[-1]
@@ -59,6 +60,6 @@ def process(query: str, api_key: str) -> str:
             )
             return final_response
         return "No response generated from the analysis."
-        
+
     except Exception as e:
         return f"Error during analysis: {str(e)}"
